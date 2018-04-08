@@ -1,0 +1,43 @@
+### BEGIN INIT INFO
+# Provides: unoconvd
+# Required-Start: $network
+# Required-Stop: $network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: unoconvd Converting documents
+### END INIT INFO
+#!/bin/sh
+case "$1" in
+    status)
+        if [ $(ps ax | grep '/usr/lib/libreoffice/program/soffice.bin' | grep 'accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext' | wc -l) -gt 0 ]; then
+            echo 'Unoconv listener active'
+        else
+            echo 'Unoconv listener inactive'
+        fi
+        ;;
+    start)
+        if [ $(ps ax | grep '/usr/lib/libreoffice/program/soffice.bin' | grep 'accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext' | wc -l) -gt 0 ]; then
+            echo 'Unoconv listener already started.'
+        else
+            /usr/bin/python3 /usr/bin/unoconv --listener &
+            echo 'Unoconv listener started.'
+        fi
+        ;;
+    stop)
+        if [ $(ps ax | grep '/usr/lib/libreoffice/program/soffice.bin' | grep 'accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext' | wc -l) -gt 0 ]; then
+            killall soffice.bin
+            echo 'Unoconv listener stopped.'
+        else
+            echo 'Unoconv not running.'
+        fi
+        ;;
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+    *)
+        echo 'Usage: /etc/init.d/unoconvd {start|stop|restart|status}'
+        exit 1
+        ;;
+esac

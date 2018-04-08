@@ -23,7 +23,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   redis-server
 
-
 ## NOTE: this command fails (fititnt, 2018-04-08 01:21 BRT)
 ## Install JAVA 8
 #RUN add-apt-repository ppa:webupd8team/java && \
@@ -47,3 +46,65 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   libreoffice-common \
   libreoffice-writer \
   libreoffice-script-provider-python
+
+## Install unoconv
+RUN git clone http://github.com/dagwieers/unoconv.git /tmp/unoconv && \
+  cd /tmp/unoconv && \
+  make install && \
+  make install
+
+ADD ./etc/init.d/unoconvd /etc/init.d/unoconvd
+
+RUN chmod +x /etc/init.d/unoconvd && service unoconvd start && update-rc.d unoconvd defaults
+
+## Install Apache Solr
+# To fix 'NOTE: Please install lsof as this script needs it to determine if Solr is listening on port 8983.'
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+  lsof
+
+RUN cd /tmp && \
+  wget http://archive.apache.org/dist/lucene/solr/6.0.1/solr-6.0.1.tgz && \
+  tar xzf solr-6.0.1.tgz solr-6.0.1/bin/install_solr_service.sh --strip-components=2 && \
+  ./install_solr_service.sh solr-6.0.1.tgz
+
+## Install Nginx
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+  nginx \
+  && rm /etc/nginx/sites-enabled/default \
+  && service nginx restart
+
+## Install PHP7
+
+# Locale fix (used at least by PHP7)
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN \
+  export LANGUAGE=en_US.UTF-8 && \
+  export LANG=en_US.UTF-8 && \
+  export LC_ALL=en_US.UTF-8 \
+  && add-apt-repository ppa:ondrej/php && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  php7.0-cli \
+  php7.0-cgi \
+  php7.0-dev \
+  php7.0-fpm \
+  php7.0-json \
+  php7.0-tidy \
+  php7.0-curl \
+  php7.0-mbstring \
+  php7.0-bcmath \
+  php7.0-common \
+  php7.0-mysql \
+  php-imagick \
+  php7.0-xml \
+  php-mysql \
+  php7.1-mysql
+# NOTE: Is really 'php7.1-mysql' ? Maybe should be 'php7.0-mysql'. I will not change this for now (fititnt, 2018-04-08 01:56 BRT)
+
+## Install composer
+RUN \
+  cd /tmp \
+  && curl -sS https://getcomposer.org/installer | php \
+  && mv composer.phar /usr/local/bin/composer
