@@ -108,3 +108,42 @@ RUN \
   cd /tmp \
   && curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/composer
+
+## Install MySQL
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  mysql-common \
+  mysql-client \
+  mysql-server \
+  && update-rc.d mysql defaults \
+  && service mysql start
+
+## Create CaseBox database
+#ADD init-database.sh /tmp/init-database.sh
+#RUN service mysql start && /tmp/init-database.sh
+# RUN service mysql start \
+#  && mysql -u root -p -e "CREATE DATABASE casebox; CREATE USER 'casebox'@'localhost' IDENTIFIED BY 'StrongPassword'; GRANT ALL PRIVILEGES ON casebox.* TO 'casebox'@'localhost'; FLUSH PRIVILEGES;"
+
+# NOTE (4): imports at build level (and not run level) is way beyond just bad practice, even for a 'allinone' quick Dockerfile (fititnt, 2018-04-08 03:03 BRT) 
+
+## Add CaseBox to NGinx
+ADD ./etc/nginx/sites-available/http_casebox.conf /etc/nginx/sites-available/http_casebox.conf
+ADD ./etc/nginx/sites-available/https_casebox.conf /etc/nginx/sites-available/https_casebox.conf
+RUN ln -s /etc/nginx/sites-available/http* /etc/nginx/sites-enabled/
+
+## Clone CaseBox app
+RUN git clone https://github.com/KETSE/casebox.git /var/www/casebox/
+
+## Import CaseBox default database
+## RUN mysql -u root -p casebox < /var/www/casebox/var/backup/cb_default.sql
+
+# NOTE: Same comment as NOTE (4)
+
+## Add Solr CaseBox configsets
+RUN \
+  mkdir -p /var/solr/data/configsets/ \
+  && ln -s /var/www/casebox/var/solr/default /var/solr/data/configsets/casebox \
+  && ln -s /var/www/casebox/var/solr/log/ /var/solr/data/configsets/casebox_log \
+  && chown solr:solr -R /var/solr/data/configsets/
+
+# Composer update CaseBox vendor packages
+RUN cd /var/www/casebox && composer update
