@@ -127,7 +127,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 ## Add CaseBox to NGinx
 ADD ./etc/nginx/sites-available/http_casebox.conf /etc/nginx/sites-available/http_casebox.conf
-ADD ./etc/nginx/sites-available/https_casebox.conf /etc/nginx/sites-available/https_casebox.conf
+# ADD ./etc/nginx/sites-available/https_casebox.conf /etc/nginx/sites-available/https_casebox.conf
 RUN ln -s /etc/nginx/sites-available/http* /etc/nginx/sites-enabled/
 
 ## Clone CaseBox app
@@ -151,6 +151,9 @@ RUN cd /var/www/casebox && composer update
 # Install supervisord
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
 ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
+
+# Need for creation of php-fpm socket. TODO reorganize order in this file later (fititnt, 2018-04-08 03:39 BRT)
+RUN mkdir -p /var/run/php
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
