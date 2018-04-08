@@ -16,3 +16,10 @@ Casebox is an integrated solution for litigation management. Collaboration featu
 - <https://lucidworks.com/2015/11/03/solr-on-docker-2/>
 - <https://github.com/docker-solr>
 - <https://github.com/docker-solr/docker-solr>
+
+## License
+
+[![Public Domain](https://i.creativecommons.org/p/zero/1.0/88x31.png)](UNLICENSE)
+
+To the extent possible under law, [Emerson Rocha](https://github.com/fititnt)
+has waived all copyright and related or neighboring rights to this work.
