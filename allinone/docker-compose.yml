@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  casebox-allinone:
+    build: ./
+    ports:
+      - "80:80"

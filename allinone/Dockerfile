@@ -131,7 +131,7 @@ ADD ./etc/nginx/sites-available/https_casebox.conf /etc/nginx/sites-available/ht
 RUN ln -s /etc/nginx/sites-available/http* /etc/nginx/sites-enabled/
 
 ## Clone CaseBox app
-RUN git clone https://github.com/KETSE/casebox.git /var/www/casebox/
+RUN git clone https://github.com/huridocs/casebox.git /var/www/casebox/
 
 ## Import CaseBox default database
 ## RUN mysql -u root -p casebox < /var/www/casebox/var/backup/cb_default.sql
@@ -147,3 +147,9 @@ RUN \
 
 # Composer update CaseBox vendor packages
 RUN cd /var/www/casebox && composer update
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+#CMD ["nginx", "-g", "daemon off;"]
