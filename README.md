@@ -1,5 +1,11 @@
-# casebox-docker
-Casebox is an integrated solution for litigation management. Collaboration features paired with file management make it a tool that allows lawyers and their teams to focus on what matters. https://www.casebox.org/
+# CaseBox with Docker
+[Casebox](https://www.casebox.org/about/) is an integrated solution for
+litigation management. It started as a project to provide a sophisticated case
+management solution to one NGO, and was subsequently expanded to become a
+flexible case management system for human rights organisations.
+
+This work-in-progress repository have one alternative way of install using
+[Docker](https://www.docker.com/).
 
 - Website: <https://www.casebox.org/>
 - GitHub: <https://github.com/huridocs/casebox>
