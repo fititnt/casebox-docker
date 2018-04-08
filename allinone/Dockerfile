@@ -148,6 +148,10 @@ RUN \
 # Composer update CaseBox vendor packages
 RUN cd /var/www/casebox && composer update
 
+# Install supervisord
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
+ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
+
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

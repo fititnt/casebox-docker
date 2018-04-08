@@ -1,18 +1,27 @@
 #!/bin/bash
 
+#supervisord -c /etc/supervisor.conf -n
+supervisord -n
+
 # NOTE: is not a good practice run multiple services on a same docker container (fititnt, 2018-04-08 04:32 BRT)
+
+#!/bin/bash
+
+: <<'COMMENT'
 
 # File based on https://docs.docker.com/config/containers/multi-service_container/
 
 
-
 # Start the first process
-service nginx start
+#service nginx start
+/usr/sbin/nginx -g "daemon off;"
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start nginx: $status"
   exit $status
 fi
+service nginx start
+echo "$(service nginx status)"
 
 # Start the second process
 service mysql start
@@ -21,6 +30,17 @@ if [ $status -ne 0 ]; then
   echo "Failed to start mysql: $status"
   exit $status
 fi
+
+echo "$(netstat -ntulp)"
+
+while sleep 10; do
+  if [ "$(ps -ef | grep -v grep | grep nginx | wc -l)" = 0 ]; then
+    echo "$(service nginx status)"
+    echo "NGinx off"
+    exit 1
+  fi
+done
+
 
 # Naive check runs checks once a minute to see if either of the processes exited.
 # This illustrates part of the heavy lifting you need to do if you want to run
@@ -40,3 +60,5 @@ while sleep 60; do
     exit 1
   fi
 done
+
+COMMENT
