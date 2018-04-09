@@ -117,13 +117,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   && update-rc.d mysql defaults \
   && service mysql start
 
-## Create CaseBox database
-#ADD init-database.sh /tmp/init-database.sh
-#RUN service mysql start && /tmp/init-database.sh
-# RUN service mysql start \
-#  && mysql -u root -p -e "CREATE DATABASE casebox; CREATE USER 'casebox'@'localhost' IDENTIFIED BY 'StrongPassword'; GRANT ALL PRIVILEGES ON casebox.* TO 'casebox'@'localhost'; FLUSH PRIVILEGES;"
+# Install supervisord
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
+ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
 
-# NOTE (4): imports at build level (and not run level) is way beyond just bad practice, even for a 'allinone' quick Dockerfile (fititnt, 2018-04-08 03:03 BRT) 
+# Need for creation of php-fpm socket. TODO reorganize order in this file later (fititnt, 2018-04-08 03:39 BRT)
+RUN mkdir -p /var/run/php
 
 ## Add CaseBox to NGinx
 ADD ./etc/nginx/sites-available/http_casebox.conf /etc/nginx/sites-available/http_casebox.conf
@@ -132,11 +131,6 @@ RUN ln -s /etc/nginx/sites-available/http* /etc/nginx/sites-enabled/
 
 ## Clone CaseBox app
 RUN git clone https://github.com/huridocs/casebox.git /var/www/casebox/
-
-## Import CaseBox default database
-## RUN mysql -u root -p casebox < /var/www/casebox/var/backup/cb_default.sql
-
-# NOTE: Same comment as NOTE (4)
 
 ## Add Solr CaseBox configsets
 RUN \
@@ -148,18 +142,9 @@ RUN \
 # Composer update CaseBox vendor packages
 RUN cd /var/www/casebox && composer update
 
-# Install supervisord
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
-ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
-
-# Need for creation of php-fpm socket. TODO reorganize order in this file later (fititnt, 2018-04-08 03:39 BRT)
-RUN mkdir -p /var/run/php
-
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./tools/ /tools
 COPY ./config.ini /var/www/casebox/httpsdocs/config.ini
 RUN chmod 777 /var/www/casebox/logs/
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-#CMD ["nginx", "-g", "daemon off;"]

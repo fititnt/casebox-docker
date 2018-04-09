@@ -5,4 +5,8 @@ services:
     build: ./
     ports:
       - "80:80"
-      - "33363:3363"
+      - "33306:3306"
+    # NOTE: the next two lines overide original repository with my own version
+    #       for debug. Please comment these lines on your setup (fititnt, 2018-04-09 02:12 BRT)
+#    volumes:
+#      - /alligo/code/fititnt/casebox:/var/www/casebox/
