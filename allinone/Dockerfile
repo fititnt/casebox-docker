@@ -156,6 +156,7 @@ ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
 RUN mkdir -p /var/run/php
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./tools/casebox-setup.sh /casebox-setup.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
