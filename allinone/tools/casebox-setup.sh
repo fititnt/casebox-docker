@@ -1,15 +1,12 @@
 #!/bin/bash
 
-echo "casebox-docker: /setup.sh is waiting..."
+echo "/casebox-setup.sh: waiting..."
 
-#sleep 10
-
-echo "This script should be called at first time 'casebox-allinone' started"
-
+sleep 5
 
 RESULT=`mysqlshow --user=casebox --password="StrongPassword" casebox| grep -v Wildcard | grep -o casebox`
 if [ "$RESULT" == "myDatabase" ]; then
-    echo "casebox database exists"
+    echo "/casebox-setup.sh: casebox database exists"
 else
-    echo "casebox database do not exist. Creating one..."
+    echo "/casebox-setup.sh: casebox database do not exist. Creating one..."
 fi
