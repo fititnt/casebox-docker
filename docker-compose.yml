@@ -1,18 +1,32 @@
 version: "3"
 
 services:
-  casebox-allinone:
+  casebox:
     build: ./
+    restart: unless-stopped
+    depends_on:
+      - mysql
     ports:
       - "80:80"
-      - "33306:3306"
-    # NOTE: the next two lines overide original repository with my own version
-    #       for debug. Please comment these lines on your setup (fititnt, 2018-04-09 02:12 BRT)
-#    volumes:
-#      - /alligo/code/fititnt/casebox:/var/www/casebox/
 
-#    volumes:
-#      - ./data/mysql/:/var/lib/mysql
-#    # NOTE: the next line overide original repository with my own version
-#    #       for debug. Please comment this line on your setup (fititnt, 2018-04-10 02:33 BRT)
-#    #  - /alligo/code/fititnt/casebox:/var/www/casebox/
+  # See https://docs.docker.com/samples/library/mysql
+  # See https://hub.docker.com/_/mysql/
+  mysql:
+    image: mysql:5.5
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: casebox
+      MYSQL_USER: casebox
+      MYSQL_PASSWORD: StrongPassword
+      MYSQL_ROOT_PASSWORD: StrongRootPassword
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+

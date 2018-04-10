@@ -7,26 +7,17 @@
 FROM ubuntu:14.04
 MAINTAINER "Emerson Rocha <rocha@ieee.org>"
 
-
-# Install common software
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   curl \
   git \
   imagemagick \
+  lsof \
   mailutils \
   sendmail \
+  supervisor \
   software-properties-common \
   wget \
   zip
-
-# Install Redis server
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
-  redis-server
-
-## NOTE: this command fails (fititnt, 2018-04-08 01:21 BRT)
-## Install JAVA 8
-#RUN add-apt-repository ppa:webupd8team/java && \
-#  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y oracle-java8-installer ca-certificates oracle-java8-set-default
 
 # Install JAVA 8 (inspired on https://github.com/dockerfile/java/blob/master/oracle-java8/Dockerfile)
 RUN \
@@ -57,15 +48,12 @@ ADD ./etc/init.d/unoconvd /etc/init.d/unoconvd
 
 RUN chmod +x /etc/init.d/unoconvd && service unoconvd start && update-rc.d unoconvd defaults
 
-## Install Apache Solr
-# To fix 'NOTE: Please install lsof as this script needs it to determine if Solr is listening on port 8983.'
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
-  lsof
-
 RUN cd /tmp && \
   wget http://archive.apache.org/dist/lucene/solr/6.0.1/solr-6.0.1.tgz && \
   tar xzf solr-6.0.1.tgz solr-6.0.1/bin/install_solr_service.sh --strip-components=2 && \
   ./install_solr_service.sh solr-6.0.1.tgz
+
+### TODO: replace NGinx with Apache (fititnt, 2018-04-10 04:22 BRT)
 
 ## Install Nginx
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
@@ -112,16 +100,8 @@ RUN \
   && curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/composer
 
-## Install MySQL
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  mysql-common \
-  mysql-client \
-  mysql-server \
-  && update-rc.d mysql defaults \
-  && service mysql start
-
 # Install supervisord
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
+#RUN DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
 ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
 
 ## Add CaseBox to NGinx
