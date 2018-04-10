@@ -7,3 +7,4 @@
 - `tail -f /var/www/casebox/logs/cb_error_log`
 - `tail -f  /var/log/nginx/http_casebox-access.log`
 - `tail -f  /var/log/nginx/http_casebox-error.log`
+<!-- - `sudo rm -rf ./data/mysql/* # THIS WILL DELETE MYSQL DATA, DO NOT DO IT IF YOU ARE NOT SURE` -->
