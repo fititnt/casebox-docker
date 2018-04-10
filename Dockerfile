@@ -13,6 +13,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   imagemagick \
   lsof \
   mailutils \
+  mysql-client \
   sendmail \
   supervisor \
   software-properties-common \
@@ -88,8 +89,7 @@ RUN \
   php-imagick \
   php7.0-xml \
   php-mysql \
-  php7.1-mysql
-# NOTE: Is really 'php7.1-mysql' ? Maybe should be 'php7.0-mysql'. I will not change this for now (fititnt, 2018-04-08 01:56 BRT)
+  php7.0-mysql
 
 # Need for creation of php-fpm socket. TODO reorganize order in this file later (fititnt, 2018-04-08 03:39 BRT)
 RUN mkdir -p /var/run/php
