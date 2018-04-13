@@ -121,9 +121,18 @@ ADD ./etc/supervisor/conf.d/ /etc/supervisor/conf.d
 ## TODO: Re-enable git clone and composer update inside this container, or at least
 #        use docker multisteps for this (fititnt, 2018-04-13 06:25 BRT)
 
+## Install apache & PHP
+# This should be moved at start of this Dockerfile to reduce docker layers
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+  apache2 \
+  php5 \
+  php5-mysql \
+  php5-mcrypt \
+  libapache2-mod-php5
+
 ## Clone CaseBox app
 # RUN git clone https://github.com/huridocs/casebox.git /var/www/casebox/
-COPY casebox/* /var/www/casebox/
+COPY casebox /var/www/casebox/
 
 ## 
 # Composer update CaseBox vendor packages
@@ -139,6 +148,9 @@ RUN \
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./tools/ /tools
 COPY ./config.ini /var/www/casebox/httpsdocs/config.ini
+RUN ls -lha /var/www/
+RUN ls -lha /var/www/casebox
+RUN ls -lha /var/www/casebox/logs/
 RUN chmod 777 /var/www/casebox/logs/
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

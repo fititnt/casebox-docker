@@ -16,6 +16,8 @@ This work-in-progress repository have one alternative way of install using
 - Clone this repository: `git clone https://github.com/fititnt/casebox-docker`
 - Enter the casebox-docker folder: `cd casebox-docker`
 - Clone the Huridocs/casebox V1 at folder casebox/:`git clone https://github.com/huridocs/casebox`
+- `docker-compose up` at root folder (casebox-docker) to start all containers
+- `docker-compose up --build`  but force rebuild the Dockerfile
 
 -->
 
