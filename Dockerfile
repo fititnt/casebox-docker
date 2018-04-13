@@ -110,7 +110,8 @@ ADD ./etc/nginx/sites-available/http_casebox.conf /etc/nginx/sites-available/htt
 RUN ln -s /etc/nginx/sites-available/http* /etc/nginx/sites-enabled/
 
 ## Clone CaseBox app
-RUN git clone https://github.com/huridocs/casebox.git /var/www/casebox/
+# RUN git clone https://github.com/huridocs/casebox.git /var/www/casebox/
+COPY casebox/* /var/www/casebox/
 
 ## Add Solr CaseBox configsets
 RUN \

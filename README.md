@@ -9,8 +9,17 @@ This work-in-progress repository have one alternative way of install using
 
 - Website: <https://www.casebox.org/>
 - GitHub: <https://github.com/huridocs/casebox>
-- Vagrant: <https://github.com/KETSE/casebox-vagrant>
-- Install instructions: <https://github.com/KETSE/casebox/wiki>
+
+<!--
+## Usage
+
+- Clone this repository: `git clone https://github.com/fititnt/casebox-docker`
+- Enter the casebox-docker folder: `cd casebox-docker`
+- Clone the Huridocs/casebox V1 at folder casebox/:`git clone https://github.com/huridocs/casebox`
+
+-->
+
+## License
 
 [![Public Domain](https://i.creativecommons.org/p/zero/1.0/88x31.png)](UNLICENSE)
 
