@@ -145,12 +145,17 @@ RUN \
   && ln -s /var/www/casebox/var/solr/log/ /var/solr/data/configsets/casebox_log \
   && chown solr:solr -R /var/solr/data/configsets/
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./tools/ /tools
+COPY ./etc/apache2/mods-enabled/dir.conf /etc/apache2/mods-enabled/dir.conf
+COPY ./etc/apache2/sites-enabled/casebox.conf /etc/apache2/sites-enabled/casebox.conf
 COPY ./config.ini /var/www/casebox/httpsdocs/config.ini
-RUN ls -lha /var/www/
-RUN ls -lha /var/www/casebox
-RUN ls -lha /var/www/casebox/logs/
-RUN chmod 777 /var/www/casebox/logs/
+
+WORKDIR /
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+#RUN ls -lha /var/www/
+#RUN ls -lha /var/www/casebox
+#RUN ls -lha /var/www/casebox/logs/
+#RUN chmod 777 /var/www/casebox/logs/
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
